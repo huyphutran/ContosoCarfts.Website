@@ -1,0 +1,69 @@
+﻿@using ContosoCarfts.Website.Models;
+@using Microsoft.AspNetCore.Components.Web
+@using ContosoCrafts.WebSite.Services
+@inject JsonFileProductService ProductService
+
+
+<div class="container">
+    <div class="row gy-4">
+        <!-- 'gy-4' provides vertical spacing between rows -->
+        @foreach (var product in ProductService.GetProducts())
+        {
+            <div class="col-12 col-sm-6 col-md-4">
+                <!-- Responsive breakpoints -->
+                <div class="card">
+                    <img src="@product.image" alt="@product.title" class="card-img-top"> <!-- Card image using <img> -->
+                    <div class="card-body">
+                        <h5 class="card-title">@product.title</h5>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button @onclick="() => SelectProduct(product.id)"
+                            data-bs-toggle="modal"
+                            data-bs-target="#productModal"
+                            class="btn btn-primary">
+                        More Info
+                    </button>
+                </div>
+            </div>
+        }
+    </div>
+    </div>
+
+@if (selectedProduct != null)
+{
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productTitle" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productTitle">@selectedProduct.title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <img src="@selectedProduct.image" alt="@selectedProduct.title" class="card-img-top">
+                        <div class="card-body">
+                            <p class="card-text">@selectedProduct.description</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!-- any footer content here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+}
+
+@code {
+    Product selectedProduct;
+    string productId;
+
+    void SelectProduct(string ProductId)
+    {
+        productId = ProductId;
+        selectedProduct = ProductService.GetProducts().First(x => x.id == productId);
+    }
+}
